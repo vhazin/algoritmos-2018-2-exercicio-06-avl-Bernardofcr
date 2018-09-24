@@ -36,8 +36,8 @@ void updatealt(struct Arvore *arv){
     }
 }
 
-struct Arvore *criararv (int id, struct Arvore *esq, struct Arvore *dir){
-    struct Arvore *raiz;
+struct Arvore *criararv (int id, arvore *esq, arvore *dir){
+    arvore *raiz;
     raiz=malloc(sizeof(arvore));
     raiz->id=id;
     raiz->esq=esq;
@@ -72,34 +72,60 @@ struct Arvore *findarv(struct Arvore *arv, int id){
         return arv;
 }
 
-int main() {
-    int t,count=0,n,add,altdir,altesq;
+int main(void) {
+    int t,count=0,n,add,altdir,altesq,i;
     scanf("%d",&t);
     struct Arvore *arv[t];
-    int nmax[t],nmin[t];
+    int nmax[t],nmin[t],marker[t],array[t][101];
+    for (int count=0; count<t; count++){
+        marker[count]=0;
+        arv[count]=NULL;
+    }
+    count=0;
     while (count<t){
         nmax[count]=0;
         nmin[count]=10000;
         scanf("%d",&n);
-        while (n--){
+        i=0;
+        while (i<n){
             scanf("%d",&add);
-            addarvore(arv[count],add);
+            array[t][i]=add;
+            if (add!=-1)
+                addarvore(arv[count],add);
             if (add>nmax[count])
                 nmax[count]=add;
             else if (add<nmin[count])
                 nmin[count]=add;
+            i++;
         }
+        i=0;
+        while (i<n){
+            if (array[count][i]!=-1){
+                altdir=altura(findarv((arv[count]),array[count][i])->dir);
+                altesq=altura(findarv((arv[count]),array[count][i])->esq);
+                if (altesq-altdir>-1||altesq-altdir<1){
+                    marker[count]=1;
+                    continue;
+                }else
+                    marker[count]=0;
+            }
+            i++;
+       }
         count++;
     }
+    printf("\n");
     count=0;
     while (count<t){
         altdir=altura(findarv(arv[count],nmax[count]));
         altesq=altura(findarv(arv[count],nmin[count]));
-        if (((altdir-altesq)>-2)||((altdir-altesq)<2))
-            printf("T\n");
-        else
-            printf("F\n");
+        if (marker[count]==1)//{
+          //  if (((altdir-altesq)>=-1)||((altdir-altesq)<=1))
+                printf("T\n");
+            else
+                printf("F\n");
+        
         count++;
+        //}
     }
     return 0;
 }
